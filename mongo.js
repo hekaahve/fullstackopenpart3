@@ -22,7 +22,8 @@ const Person = mongoose.model('Person', personSchema)
 
 var person = new Person({
     name: process.argv[3],
-    number: process.argv[4]
+    number: process.argv[4],
+    id: Math.floor(Math.random()*100)
 });
 
 if (person.name == undefined && person.number == undefined ) {
