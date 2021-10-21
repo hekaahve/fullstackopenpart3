@@ -1,10 +1,10 @@
 DELETE http://localhost:3001/api/persons/4 HTTP/1.1
 ###
-POST https://sheltered-ravine-40342.herokuapp.com/api/persons HTTP/1.1
+POST http://localhost:3001/api/persons HTTP/1.1
 content-type: application/json
 
 {
-    "name": "Dan Test",
+    "name": "Dan Test test",
     "number": "994",
-    "id": 8
+    "id": 99
 }

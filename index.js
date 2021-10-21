@@ -1,41 +1,21 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const cors = require('cors')
+const Person = require('./models/person')
 
 app.use(cors())
 app.use(express.json())
 app.use(express.static('build'))
-
-
-    let persons = [
-      {
-        name: "Dan Abramov",
-        number: "9999",
-        id: 3
-      },
-      {
-        name: "Mary Poppendieck",
-        number: "88888",
-        id: 4
-      },
-      {
-        name: "Mororororo",
-        number: "0303030303",
-        id: 12
-      },
-      {
-        name: "kfkfkf",
-        number: "000550",
-        id: 14
-      }
-    ]
   
   app.get('/', (req, res) => {
     res.send('<h1>Hello World!</h1>')
   })
 
   app.get('/api/persons', (req, res) => {
-    res.json(persons)
+    Person.find({}).then(people => {
+      res.json(people)
+    })
   })
 
   app.get('/api/info', (req, res) => {
@@ -45,20 +25,15 @@ app.use(express.static('build'))
   })
 
   app.get('/api/persons/:id', (req, res) => {
-    const id = req.params.id
-    const person = persons.find(p => p.id == id)
-
-    if (person){
-        res.json(person)     
-    }else{
-        res.status(404).end()
-    }
+    Person.findById(req.params.id).then(person =>{
+      res.json(person)
+    })
   })
   
   app.delete('/api/persons/:id', (req, res) => {
-    const id = Number(req.params.id)
-    persons = persons.filter(p => p.id !== id)
-    res.status(204).end()
+    Person.findByIdAndDelete(req.params.id).then(person =>{
+      console.log(person +"deleted")
+    })
   })
 
   app.post('/api/persons', (req, res) => {
@@ -72,17 +47,14 @@ app.use(express.static('build'))
     if (!body.number){
       res.json({ error: 'number missing' })
     }
-
-    let name = persons.find(n => n.name == body.name)
-    if (name){
-      res.json({ error: 'name must be unique' })
-    }
-    const person = {
+    const person = new Person({
       name: body.name,
       number: body.number,
       id: maxId
-    }
-    res.json(person)
+    })
+    person.save().then(savedPerson => {
+      res.json(savedPerson)
+    })
 
   })
   
