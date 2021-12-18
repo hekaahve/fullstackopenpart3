@@ -1,0 +1,3 @@
+3.14: puhelinluettelo ja tietokanta, step2
+Katso frontend, että voi lisätä henkilön
+vaikka olisi jo olemassa kannassa

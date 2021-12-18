@@ -40,7 +40,7 @@ app.use(express.static('build'))
     const maxId = Math.random(10000)
 
     const body = req.body
-
+    //TODO: fix alerts + Delete 503 (Service Unavailable) error from UI-console
     if (!body.name){
       res.json({ error: 'name missing' })
     }

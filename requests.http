@@ -5,6 +5,6 @@ content-type: application/json
 
 {
     "name": "Dan Test test",
-    "number": "994",
+    "number": "",
     "id": 99
 }
