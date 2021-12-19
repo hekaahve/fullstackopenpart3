@@ -37,7 +37,7 @@ app.use(express.static('build'))
   })
 
   app.post('/api/persons', (req, res) => {
-    const maxId = Math.random(10000)
+    const maxId = Math.floor(Math.random() * 100);
 
     const body = req.body
     //TODO: fix alerts + Delete 503 (Service Unavailable) error from UI-console
