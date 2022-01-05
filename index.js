@@ -5,9 +5,31 @@ const cors = require('cors')
 const Person = require('./models/person')
 
 app.use(cors())
-app.use(express.json())
 app.use(express.static('build'))
-  
+app.use(express.json())
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  }
+
+  next(error)
+}
+
+app.use(errorHandler)
+
+const requestLogger = (request, response, next) => {
+  console.log('Method:', request.method)
+  console.log('Path:  ', request.path)
+  console.log('Body:  ', request.body)
+  console.log('---')
+  next()
+}
+
+app.use(requestLogger)
+
   app.get('/', (req, res) => {
     res.send('<h1>Hello World!</h1>')
   })
@@ -20,20 +42,28 @@ app.use(express.static('build'))
 
   app.get('/api/info', (req, res) => {
     var mydate = new Date();
-    res.send(`<p>Phonebook has info for ${persons.length} persons <br>
+    res.send(`<p>Phonebook has info for ${Person.length} persons <br>
     ${mydate}</p>`)
   })
 
-  app.get('/api/persons/:id', (req, res) => {
-    Person.findById(req.params.id).then(person =>{
-      res.json(person)
+  app.get('/api/persons/:id', (req, res, next) => {
+    Person.findById(req.params.id)
+    .then(person =>{
+      if (person){
+        res.json(person)
+      } else {
+        response.status(404).end()
+      }
     })
+    .catch(error => next(error))
   })
   
-  app.delete('/api/persons/:id', (req, res) => {
-    Person.findByIdAndDelete(req.params.id).then(person =>{
-      console.log(person +"deleted")
+  app.delete('/api/persons/:id', (request, response, next) => {
+    Person.findByIdAndRemove(request.params.id)
+    .then(person =>{
+      response.status(204).end()
     })
+    .catch(error => next(error))
   })
 
   app.post('/api/persons', (req, res) => {
@@ -57,6 +87,29 @@ app.use(express.static('build'))
     })
 
   })
+
+  app.put('/api/persons/:id', (request, response, next) => {
+    const body = request.body
+  
+    const person = {
+      name: body.name,
+      number: body.number,
+      id: body.id
+    }
+  
+    Person.findByIdAndUpdate(request.params.id, person, { new: true })
+      .then(updatedPerson => {
+        response.json(updatedPerson)
+      })
+      .catch(error => next(error))
+  })
+
+  const unknownEndpoint = (request, response) => {
+    response.status(404).send({ error: 'unknown endpoint' })
+  }
+  
+  //unknown errorhandling
+  app.use(unknownEndpoint)
   
   const PORT = process.env.PORT || 3001
   app.listen(PORT, () => {
