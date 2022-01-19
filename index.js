@@ -13,12 +13,13 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
   }
 
   next(error)
 }
 
-app.use(errorHandler)
 
 const requestLogger = (request, response, next) => {
   console.log('Method:', request.method)
@@ -66,25 +67,20 @@ app.use(requestLogger)
     .catch(error => next(error))
   })
 
-  app.post('/api/persons', (req, res) => {
+  app.post('/api/persons', (req, res, next) => {
     const maxId = Math.floor(Math.random() * 100);
 
     const body = req.body
-    //TODO: fix alerts + Delete 503 (Service Unavailable) error from UI-console
-    if (!body.name){
-      res.json({ error: 'name missing' })
-    }
-    if (!body.number){
-      res.json({ error: 'number missing' })
-    }
+    
     const person = new Person({
       name: body.name,
       number: body.number,
       id: maxId
     })
     person.save().then(savedPerson => {
-      res.json(savedPerson)
+      res.json(savedPerson.toJSON())
     })
+    .catch(error => next(error))
 
   })
 
@@ -110,6 +106,7 @@ app.use(requestLogger)
   
   //unknown errorhandling
   app.use(unknownEndpoint)
+  app.use(errorHandler)
   
   const PORT = process.env.PORT || 3001
   app.listen(PORT, () => {

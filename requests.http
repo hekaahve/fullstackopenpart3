@@ -8,9 +8,9 @@ POST http://localhost:3001/api/persons HTTP/1.1
 content-type: application/json
 
 {
-    "name": "Dan Test test",
-    "number": "",
-    "id": 99
+    "name": "Jesse",
+    "number": "111",
+    "id": 999
 }
 ###
 PUT http://localhost:3001/api/persons/616da5db39cc8d47a6109624 HTTP/1.1
