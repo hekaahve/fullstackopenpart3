@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -24,5 +25,8 @@
     "express": "^4.17.1",
     "mongoose": "^6.0.11",
     "mongoose-unique-validator": "^3.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.11.0"
   }
 }
